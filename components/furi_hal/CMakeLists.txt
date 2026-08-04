@@ -29,6 +29,8 @@ set(FURI_HAL_SRCS
     "furi_hal_light.c"
     "furi_hal_vibro.c"
     "furi_hal_speaker.c"
+    "oled/ssd1306.c"
+    "oled/u8g2_glue.c"
     "furi_hal_display.c"
     "furi_hal_spi_bus.c"
     "furi_hal_spi.c"
@@ -49,6 +51,7 @@ set(FURI_HAL_REQUIRES
     ble_hid ble_serial ble_profile furi_ble flipper_protobuf
     esp_adc esp_driver_rmt esp_driver_i2s nvs_flash
     app_update esp_partition
+    u8g2
 )
 
 # HID backend: TinyUSB on SoCs with USB-OTG, stub elsewhere.
@@ -65,7 +68,7 @@ endif()
 
 idf_component_register(
     SRCS ${FURI_HAL_SRCS}
-    INCLUDE_DIRS "." ".." "../.." "boards"
+    INCLUDE_DIRS "." ".." "../.." "boards" "oled"
     REQUIRES ${FURI_HAL_REQUIRES}
 )
 

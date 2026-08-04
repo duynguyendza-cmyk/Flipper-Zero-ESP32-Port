@@ -8,7 +8,6 @@
 #include "furi_hal_display.h"
 #include "furi_hal_light.h"
 #include "furi_hal_resources.h"
-#include "furi_hal_spi_bus.h"
 #include "boards/board.h"
 
 #include <string.h>
@@ -16,9 +15,14 @@
 #include <esp_heap_caps.h>
 #include <esp_system.h>
 #include <driver/gpio.h>
-#include <driver/spi_master.h>
 
 #include <freertos/semphr.h>
+
+#include <driver/i2c.h>
+#include <u8g2.h>
+#include <u8x8.h>
+
+static u8g2_t u8g2;
 
 static const char* TAG = "FuriHalDisplay";
 
@@ -76,241 +80,68 @@ static uint16_t bg_color;
 
 
 
-void furi_hal_display_init(void) {
-    ESP_LOGI(TAG, "Initializing display for %s", BOARD_NAME);
-    furi_hal_spi_bus_init();
-    if(!lcd_flush_done) {
-        lcd_flush_done = xSemaphoreCreateBinary();
-        ESP_ERROR_CHECK(lcd_flush_done ? ESP_OK : ESP_ERR_NO_MEM);
-    }
+void furi_hal_display_init(void)
+{
+    i2c_config_t conf = {
+            .mode = I2C_MODE_MASTER,
+                    .sda_io_num = 15,
+                            .scl_io_num = 16,
+                                    .sda_pullup_en = GPIO_PULLUP_ENABLE,
+                                            .scl_pullup_en = GPIO_PULLUP_ENABLE,
+                                                    .master.clk_speed = 400000,
+                                                        };
 
-    /* Initialize SPI bus */
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = gpio_lcd_din.pin,
-        .miso_io_num = gpio_sdcard_miso.pin,
-        .sclk_io_num = gpio_lcd_clk.pin,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = LCD_H_RES * STRIPE_HEIGHT * sizeof(uint16_t),
-    };
-    esp_err_t spi_err = spi_bus_initialize(LCD_SPI_HOST, &bus_cfg, SPI_DMA_CH_AUTO);
-    /* ESP_ERR_INVALID_STATE is OK — bus may already be initialized by SubGHz on shared-bus boards */
-    if(spi_err != ESP_OK && spi_err != ESP_ERR_INVALID_STATE) {
-        ESP_ERROR_CHECK(spi_err);
-    }
+                                                            i2c_param_config(I2C_NUM_0, &conf);
+                                                                i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
 
-    /* Create panel IO (SPI) */
-    esp_lcd_panel_io_handle_t io_handle = NULL;
-    esp_lcd_panel_io_spi_config_t io_config = {
-        .dc_gpio_num = gpio_lcd_dc.pin,
-        .cs_gpio_num = gpio_lcd_cs.pin,
-        .pclk_hz = LCD_SPI_FREQ,
-        .lcd_cmd_bits = LCD_CMD_BITS,
-        .lcd_param_bits = LCD_PARAM_BITS,
-        .spi_mode = 0,
-        .trans_queue_depth = 1,
-        .on_color_trans_done = furi_hal_display_flush_done_callback,
-        .user_ctx = NULL,
-    };
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi(LCD_SPI_HOST, &io_config, &io_handle));
+                                                                    u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+                                                                            &u8g2,
+                                                                                    U8G2_R0,
+                                                                                            u8x8_byte_hw_i2c,
+                                                                                                    u8x8_gpio_and_delay_esp32);
 
-    /* Create ST7789 panel */
-    esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = gpio_lcd_rst.pin,
-#if defined(BOARD_LCD_COLOR_ORDER_BGR) && BOARD_LCD_COLOR_ORDER_BGR
-        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
-#else
-        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
-#endif
-        .bits_per_pixel = 16,
-    };
-    /* --- Bring the ST7789 to a known-clean state, every boot --------------
-     * A software reset (esp_restart) does NOT power-cycle the display: the
-     * ST7789 keeps every register — MADCTL/colour-order, COLMOD, inversion,
-     * rotation. That happens after an `esptool` flash *and* after any other
-     * firmware that configured the panel differently ran before us. If any of
-     * that lingers the R/B channels end up swapped — Flipper orange shows up as
-     * blue — until the user pulls the battery (a real cold boot). So we do what
-     * a thorough driver (TFT_eSPI) does on every init: hardware-reset pulse →
-     * SWRESET command → full panel init → re-assert COLMOD. After that the panel
-     * is in *our* configuration regardless of what ran before. */
+                                                                                                        u8g2_InitDisplay(&u8g2);
+                                                                                                            u8g2_SetPowerSave(&u8g2,0);
+                                                                                                                u8g2_ClearBuffer(&u8g2);
+                                                                                                                    u8g2_SendBuffer(&u8g2);
+                                                                                                                    }
 
-    /* 1) Hardware reset pulse on RESX (HIGH → LOW → HIGH, generous timing). */
-    gpio_config_t rst_cfg = {
-        .mode = GPIO_MODE_OUTPUT,
-        .pin_bit_mask = 1ULL << gpio_lcd_rst.pin,
-    };
-    gpio_config(&rst_cfg);
-    gpio_set_level((gpio_num_t)gpio_lcd_rst.pin, 1);   /* ensure a clean falling edge */
-    vTaskDelay(pdMS_TO_TICKS(10));
-    gpio_set_level((gpio_num_t)gpio_lcd_rst.pin, 0);   /* assert reset (active low) */
-    vTaskDelay(pdMS_TO_TICKS(20));                      /* RESX min low is 10us; be generous */
-    gpio_set_level((gpio_num_t)gpio_lcd_rst.pin, 1);   /* release reset */
-    vTaskDelay(pdMS_TO_TICKS(150));                     /* ST7789: wait ≥120ms after reset */
-
-    /* 2) Software reset (0x01) — re-loads all registers to factory defaults
-     *    even if the RESX pulse above didn't fully take (e.g. a glitch on the
-     *    line right after the ESP32 digital reset). The display still draws
-     *    pixels in that case, so this command reaches it just fine. */
-    ESP_ERROR_CHECK(esp_lcd_panel_io_tx_param(io_handle, 0x01 /* SWRESET */, NULL, 0));
-    vTaskDelay(pdMS_TO_TICKS(150));
-
-    ESP_ERROR_CHECK(esp_lcd_new_panel_st7789(io_handle, &panel_config, &panel_handle));
-
-    /* 3) esp_lcd does another RESX pulse, then SLPOUT + COLMOD + MADCTL. */
-    ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_handle));
-    ESP_ERROR_CHECK(esp_lcd_panel_init(panel_handle));
-
-    /* Display orientation and corrections from board config (these (re)write
-     * MADCTL with our colour order + mirror/swap bits, and INVON/INVOFF). */
-    ESP_ERROR_CHECK(esp_lcd_panel_invert_color(panel_handle, BOARD_LCD_INVERT_COLOR));
-    ESP_ERROR_CHECK(esp_lcd_panel_swap_xy(panel_handle, BOARD_LCD_SWAP_XY));
-    ESP_ERROR_CHECK(esp_lcd_panel_mirror(panel_handle, BOARD_LCD_MIRROR_X, BOARD_LCD_MIRROR_Y));
-    ESP_ERROR_CHECK(esp_lcd_panel_set_gap(panel_handle, BOARD_LCD_GAP_X, BOARD_LCD_GAP_Y));
-
-    /* 4) Belt-and-suspenders: pin down pixel format + normal display mode.
-     *    COLMOD 0x55 = 16 bits/pixel (RGB565) — matches bits_per_pixel=16 above;
-     *    NORON (0x13) = normal display mode (not partial/idle). Both are no-ops
-     *    when the state is already right and cost nothing. */
-    {
-        const uint8_t colmod = 0x55;
-        ESP_ERROR_CHECK(esp_lcd_panel_io_tx_param(io_handle, 0x3A /* COLMOD */, &colmod, 1));
-    }
-    ESP_ERROR_CHECK(esp_lcd_panel_io_tx_param(io_handle, 0x13 /* NORON */, NULL, 0));
-
-    /* Turn on display */
-    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_handle, true));
-
-    fg_color = BOARD_LCD_FG_COLOR;
-    bg_color = BOARD_LCD_BG_COLOR;
-
-    furi_hal_display_init_scale_lut();
-
-    /* Allocate DMA-capable RGB565 stripe buffer (STRIPE_HEIGHT lines only).
-     * Sized to the full LCD width so the same scratch buffer can paint the
-     * full-width top/bottom margin strips as well as the scaled UI stripes. */
-    size_t stripe_bytes = LCD_H_RES * STRIPE_HEIGHT * sizeof(uint16_t);
-    rgb565_buf = heap_caps_malloc(stripe_bytes, MALLOC_CAP_DMA);
-    if(!rgb565_buf) {
-        ESP_LOGE(TAG, "Failed to allocate RGB565 stripe buffer (%d bytes)",
-                 (int)stripe_bytes);
-        return;
-    }
-
-    /* Clear entire screen to background (unset pixels = FG) */
-    display_fill_color(fg_color);
-
-    ESP_LOGI(TAG, "Display initialized (%dx%d, scaled %dx%d, stripe=%d lines, buf=%d bytes)",
-             FB_WIDTH, FB_HEIGHT, SCALED_WIDTH, SCALED_HEIGHT, STRIPE_HEIGHT, (int)stripe_bytes);
-}
-
-void furi_hal_display_commit(const uint8_t* data, uint32_t size) {
-    UNUSED(size);
-    if(!panel_handle || !rgb565_buf || !data) return;
-
-    /*
-     * Stripe-based rendering: render STRIPE_HEIGHT lines into the small DMA
-     * buffer, send via SPI, then render the next stripe.
-     * Saves ~95KB of internal DMA-capable SRAM.
-     *
-     * u8g2 tile buffer layout:
-     * 8 pages of 128 bytes each (128 columns × 8 pages = 1024 bytes)
-     * Byte at [page * 128 + x]: bit n = pixel at (x, page*8 + n)
-     * Bit 0 = top pixel in tile, bit 7 = bottom pixel in tile
-     */
-    furi_hal_spi_bus_lock();
-
-    /* Repaint the margin strips with the current fg_color every frame so the
-     * entire screen tracks UI Color changes. Without this the init-time fill
-     * persists and the margins keep showing the boot-time orange while the
-     * central framebuffer area updates.
-     *
-     * Top/bottom strips span the full width; left/right strips (the always-on
-     * DISPLAY_SIDE_MARGIN inset, plus any extra from aspect-fit centering) span
-     * only the height of the scaled image so they don't overdraw the corners. */
-    if(MARGIN_Y > 0) {
-        display_paint_rect(0, 0, LCD_H_RES, MARGIN_Y, fg_color);
-        display_paint_rect(
-            0, MARGIN_Y + SCALED_HEIGHT,
-            LCD_H_RES, LCD_V_RES - MARGIN_Y - SCALED_HEIGHT, fg_color);
-    }
-    if(MARGIN_X > 0) {
-        display_paint_rect(0, MARGIN_Y, MARGIN_X, SCALED_HEIGHT, fg_color);
-        display_paint_rect(
-            MARGIN_X + SCALED_WIDTH, MARGIN_Y,
-            LCD_H_RES - MARGIN_X - SCALED_WIDTH, SCALED_HEIGHT, fg_color);
-    }
-
-    for(size_t stripe_y = 0; stripe_y < SCALED_HEIGHT; stripe_y += STRIPE_HEIGHT) {
-        size_t stripe_h = STRIPE_HEIGHT;
-        if(stripe_y + stripe_h > SCALED_HEIGHT) {
-            stripe_h = SCALED_HEIGHT - stripe_y;
-        }
-
-        /* Render stripe into buffer */
-        for(size_t row = 0; row < stripe_h; row++) {
-            const size_t sy = stripe_y + row;
-            const uint8_t mono_y = y_scale_lut[sy];
-            const size_t page = mono_y >> 3;
-            const uint8_t bit_mask = 1U << (mono_y & 0x07);
-            uint16_t* dst = &rgb565_buf[row * SCALED_WIDTH];
-
-            for(size_t sx = 0; sx < SCALED_WIDTH; sx++) {
-                const uint8_t mono_x = x_scale_lut[sx];
-                const bool pixel_set = (data[page * FB_WIDTH + mono_x] & bit_mask) != 0;
-                dst[sx] = pixel_set ? bg_color : fg_color;
+void furi_hal_display_commit(const uint8_t* data, uint32_t size)
+{
+UNUSED(size);
+memcpy(u8g2_GetBufferPtr(&u8g2), data, 1024);
+u8g2_SendBuffer(&u8g2);
             }
-        }
-
-        /* DMA send this stripe */
-        furi_hal_display_prepare_flush();
-        esp_lcd_panel_draw_bitmap(
-            panel_handle,
-            MARGIN_X, MARGIN_Y + stripe_y,
-            MARGIN_X + SCALED_WIDTH, MARGIN_Y + stripe_y + stripe_h,
-            rgb565_buf);
-        furi_hal_display_wait_flush();
-    }
-
-    furi_hal_spi_bus_unlock();
-}
 
 void furi_hal_display_set_backlight(uint8_t brightness) {
-    furi_hal_light_set(LightBacklight, brightness);
+    UNUSED(brightness);
 }
 
 void furi_hal_display_sleep(void) {
-    if(!panel_handle) return;
-    furi_hal_spi_bus_lock();
-    /* SLPIN: stop the panel's internal oscillator/booster to cut idle current */
-    esp_lcd_panel_disp_on_off(panel_handle, false);
-    furi_hal_spi_bus_unlock();
 }
 
-uint16_t furi_hal_display_get_h_res(void) {
-    return LCD_H_RES;
-}
+uint16_t furi_hal_display_get_h_res(void)
+{
+    return 128;
+    }
 
-uint16_t furi_hal_display_get_v_res(void) {
-    return LCD_V_RES;
-}
+uint16_t furi_hal_display_get_v_res(void)
+{
+    return 64;
+    }
 
 esp_lcd_panel_handle_t furi_hal_display_get_panel_handle(void) {
-    return panel_handle;
+    return NULL;
 }
 
 void furi_hal_display_set_fg_color(uint16_t color) {
-    fg_color = color;
 }
 
 uint16_t furi_hal_display_get_fg_color(void) {
-    return fg_color;
 }
 
 void furi_hal_display_set_bg_color(uint16_t color) {
-    bg_color = color;
 }
 
 uint16_t furi_hal_display_get_bg_color(void) {
-    return bg_color;
 }
