@@ -140,10 +140,12 @@ void furi_hal_display_set_fg_color(uint16_t color) {
 }
 
 uint16_t furi_hal_display_get_fg_color(void) {
+    return 1;
 }
 
 void furi_hal_display_set_bg_color(uint16_t color) {
 }
 
 uint16_t furi_hal_display_get_bg_color(void) {
+    return 0;
 }
