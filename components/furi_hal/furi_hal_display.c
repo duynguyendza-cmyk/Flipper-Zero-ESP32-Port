@@ -17,9 +17,7 @@
 #include <esp_system.h>
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
-#include <esp_lcd_panel_io.h>
-#include <esp_lcd_panel_vendor.h>
-#include <esp_lcd_panel_ops.h>
+
 #include <freertos/semphr.h>
 
 static const char* TAG = "FuriHalDisplay";
@@ -76,87 +74,7 @@ static uint16_t bg_color;
  * Reduces DMA buffer from full-frame (~100KB) to a small stripe (~5KB). */
 #define STRIPE_HEIGHT 8
 
-static esp_lcd_panel_handle_t panel_handle = NULL;
-static uint16_t* rgb565_buf = NULL; // STRIPE_HEIGHT lines only
-static SemaphoreHandle_t lcd_flush_done = NULL;
-static uint8_t x_scale_lut[SCALED_WIDTH];
-static uint8_t y_scale_lut[SCALED_HEIGHT];
 
-static bool furi_hal_display_flush_done_callback(
-    esp_lcd_panel_io_handle_t panel_io,
-    esp_lcd_panel_io_event_data_t* edata,
-    void* user_ctx) {
-    UNUSED(panel_io);
-    UNUSED(edata);
-    UNUSED(user_ctx);
-
-    BaseType_t yield = pdFALSE;
-    if(lcd_flush_done) {
-        xSemaphoreGiveFromISR(lcd_flush_done, &yield);
-    }
-
-    return yield == pdTRUE;
-}
-
-static void furi_hal_display_prepare_flush(void) {
-    if(!lcd_flush_done) return;
-
-    xSemaphoreTake(lcd_flush_done, 0);
-}
-
-static void furi_hal_display_wait_flush(void) {
-    if(!lcd_flush_done) return;
-
-    if(xSemaphoreTake(lcd_flush_done, pdMS_TO_TICKS(250)) != pdTRUE) {
-        ESP_LOGW(TAG, "Timed out waiting for LCD flush");
-    }
-}
-
-static void furi_hal_display_init_scale_lut(void) {
-    for(size_t x = 0; x < SCALED_WIDTH; x++) {
-        x_scale_lut[x] = (x * FB_WIDTH) / SCALED_WIDTH;
-    }
-
-    for(size_t y = 0; y < SCALED_HEIGHT; y++) {
-        y_scale_lut[y] = (y * FB_HEIGHT) / SCALED_HEIGHT;
-    }
-}
-
-static void display_fill_color(uint16_t color) {
-    uint16_t* line = heap_caps_malloc(LCD_H_RES * sizeof(uint16_t), MALLOC_CAP_DMA);
-    if(!line) return;
-    for(int i = 0; i < LCD_H_RES; i++) line[i] = color;
-    furi_hal_spi_bus_lock();
-    for(int y = 0; y < LCD_V_RES; y++) {
-        furi_hal_display_prepare_flush();
-        esp_lcd_panel_draw_bitmap(panel_handle, 0, y, LCD_H_RES, y + 1, line);
-        furi_hal_display_wait_flush();
-    }
-    furi_hal_spi_bus_unlock();
-    free(line);
-}
-
-/* Paint a solid-color rectangle using rgb565_buf as scratch. Caller must hold
- * the SPI bus lock. Chunks vertically at STRIPE_HEIGHT to stay within the
- * buffer's capacity (STRIPE_HEIGHT rows × SCALED_WIDTH cols). Used by the
- * commit path to keep the LCD margins in sync with fg_color changes. */
-static void display_paint_rect(
-    size_t x, size_t y, size_t w, size_t h, uint16_t color) {
-    if(w == 0 || h == 0 || w > LCD_H_RES) return;
-
-    for(size_t y_off = 0; y_off < h; y_off += STRIPE_HEIGHT) {
-        size_t chunk_h = h - y_off;
-        if(chunk_h > STRIPE_HEIGHT) chunk_h = STRIPE_HEIGHT;
-
-        const size_t px_count = w * chunk_h;
-        for(size_t i = 0; i < px_count; i++) rgb565_buf[i] = color;
-
-        furi_hal_display_prepare_flush();
-        esp_lcd_panel_draw_bitmap(
-            panel_handle, x, y + y_off, x + w, y + y_off + chunk_h, rgb565_buf);
-        furi_hal_display_wait_flush();
-    }
-}
 
 void furi_hal_display_init(void) {
     ESP_LOGI(TAG, "Initializing display for %s", BOARD_NAME);
