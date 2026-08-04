@@ -79,10 +79,6 @@ static uint16_t bg_color;
  * Reduces DMA buffer from full-frame (~100KB) to a small stripe (~5KB). */
 #define STRIPE_HEIGHT 8
 
-void furi_hal_display_init(void)
-{
-    ssd1306_init();
-    }
 
 void furi_hal_display_init(void)
 {
@@ -111,12 +107,7 @@ void furi_hal_display_init(void)
                                                                                                                     }
 
 
-void furi_hal_display_commit(const uint8_t* data, uint32_t size)
-{
-    UNUSED(size);
-        ssd1306_draw_bitmap(data);
-        }
-        
+
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {
 UNUSED(size);
