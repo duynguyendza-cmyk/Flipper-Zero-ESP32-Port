@@ -25,7 +25,6 @@
 #include "oled/ssd1306.h"
 
 extern u8g2_t g_u8g2;
-#define u8g2 g_u8g2
 
 static const char* TAG = "FuriHalDisplay";
 
@@ -81,28 +80,41 @@ static uint16_t bg_color;
  * Reduces DMA buffer from full-frame (~100KB) to a small stripe (~5KB). */
 #define STRIPE_HEIGHT 8
 
-
 void furi_hal_display_init(void)
 {
-    i2c_config_t conf = {
-            .mode = I2C_MODE_MASTER,
-                    .sda_io_num = 41,
-                            .scl_io_num = 42,
-                                    .sda_pullup_en = GPIO_PULLUP_ENABLE,
-                                            .scl_pullup_en = GPIO_PULLUP_ENABLE,
-                                                    .master.clk_speed = 400000,
-                                                        };
-                                                            i2c_param_config(I2C_NUM_0, &conf);
-                                                            i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
-                                                            ssd1306_init();
-                                                    }
+    esp_err_t err;
+
+        i2c_config_t conf = {
+                .mode = I2C_MODE_MASTER,
+                        .sda_io_num = 41,
+                                .scl_io_num = 42,
+                                        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+                                                .scl_pullup_en = GPIO_PULLUP_ENABLE,
+                                                        .master.clk_speed = 400000,
+                                                            };
+
+                                                                err = i2c_param_config(I2C_NUM_0, &conf);
+                                                                    ESP_ERROR_CHECK(err);
+
+                                                                        err = i2c_driver_install(
+                                                                                I2C_NUM_0,
+                                                                                        conf.mode,
+                                                                                                0,
+                                                                                                        0,
+                                                                                                                0);
+
+                                                                                                                    if(err != ESP_OK && err != ESP_ERR_INVALID_STATE)
+                                                                                                                        {
+                                                                                                                                ESP_ERROR_CHECK(err);
+                                                                                                                                    }
+
+                                                                                                                                        ssd1306_init();
+                                                                                                                                        }
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
-{
-(void)size;
-memcpy(u8g2_GetBufferPtr(&g_u8g2), data, 1024);
+{(void)size;
 
- u8g2_SendBuffer(&g_u8g2);
+ssd1306_draw_bitmap(data);
 }
 
 void furi_hal_display_set_backlight(uint8_t brightness) {
