@@ -298,7 +298,7 @@ build_for_target() {
             -I"$IDF/esp_rom/esp32s3/include/esp32s3"
             -I"$IDF/esp_rom/esp32s3"
         )
-        TARGET_CFLAGS+=(-DBOARD_INCLUDE=\"board_oled_flipper.h\")
+        TARGET_CFLAGS+=(-DBOARD_INCLUDE=\"board_lilygo_t_embed_cc1101.h\")
     elif [ "$IDF_TARGET" = "esp32c6" ]; then
         TARGET_CFLAGS+=(-march=rv32imac_zicsr_zifencei)
         TARGET_INCLUDES+=(

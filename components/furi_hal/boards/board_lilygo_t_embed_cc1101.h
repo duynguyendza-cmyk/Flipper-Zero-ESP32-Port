@@ -15,7 +15,6 @@
  */
 
 #pragma once
-
 /* ---- Board metadata ---- */
 #define BOARD_NAME        "LilyGo T-Embed CC1101"
 #define BOARD_TARGET      "esp32s3"

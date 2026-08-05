@@ -104,12 +104,24 @@ i2c_config_t conf = {
                                                     ESP_ERROR_CHECK(err);
                                                     }
 
-                                                    
 
 
+
+for(uint8_t addr=1; addr<127; addr++) {
+        if(i2c_master_write_to_device(
+                BOARD_OLED_I2C_PORT,
+                        addr,
+                                NULL,
+                                        0,
+                                                pdMS_TO_TICKS(20)) == ESP_OK) {
+
+                                                        ESP_LOGI("OLED","Found 0x%02X",addr);
+                                                            }
+                                                            }
 
 
     ssd1306_init();
+    ESP_LOGI("OLED", "SSD1306 initialized");
     }
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)

@@ -1,6 +1,6 @@
 /**
  * @file board_lilygo_t_embed_cc1101.h
- * Board definition: LilyGo T-Embed CC1101
+ * Board definition: 
  *
  * MCU:      ESP32-S3 (dual-core Xtensa LX7)
  * Display:  ST7789 320x170 RGB565 via SPI
@@ -47,9 +47,8 @@
 #define BOARD_LCD_GAP_X         0
 #define BOARD_LCD_GAP_Y         0
 
-#define BOARD_PIN_QWIIC_SDA 41
-#define BOARD_PIN_QWIIC_SCL 42
-
+#define BOARD_PIN_OLED_SDA 41
+#define BOARD_PIN_OLED_SCL 42
 #define BOARD_OLED_I2C_PORT I2C_NUM_1
 
 /* Flipper framebuffer → display color mapping (RGB565, native byte order) */
