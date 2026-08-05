@@ -5,7 +5,7 @@
 #define CONTRAST_ERC 32
 #define CONTRAST_MGG 28
 
-uint8_t u8g2_gpio_and_delay_esp32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, void* arg_ptr) {
+uint8_t u8x8_gpio_and_delay_esp32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, void* arg_ptr) {
     UNUSED(u8x8);
     UNUSED(arg_ptr);
     switch(msg) {

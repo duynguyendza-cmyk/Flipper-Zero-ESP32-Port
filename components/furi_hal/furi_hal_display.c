@@ -108,13 +108,11 @@ void furi_hal_display_init(void)
                                                             i2c_param_config(I2C_NUM_0, &conf);
                                                                 i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
 
-                                                                    u8g2_Setup_st756x_flipper(
+                                                                    u8g2_Setup_ssd1306_i2c_128x64_noname_f(
                                                                             &u8g2,
                                                                                 U8G2_R0,
-                                                                                    u8x8_hw_spi_esp32,
+                                                                                    u8x8_byte_hw_i2c,
                                                                                         u8x8_gpio_and_delay_esp32);
-                                                                    
-
                                                                                                         u8g2_InitDisplay(&u8g2);
                                                                                                             u8g2_SetPowerSave(&u8g2,0);
                                                                                                                 u8g2_ClearBuffer(&u8g2);
