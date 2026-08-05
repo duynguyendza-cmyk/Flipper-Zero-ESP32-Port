@@ -16,14 +16,27 @@
 #include <esp_system.h>
 #include <driver/gpio.h>
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include <freertos/semphr.h>
-
-#include "oled/ssd1306.h"
+#include "u8g2_glue.h"
 #include <driver/i2c.h>
-#include <u8g2.h>
-#include <u8x8.h>
+#include "u8x8.h"
 #include "oled/u8g2_glue.h"
+/**
+extern uint8_t u8x8_byte_hw_i2c(
+        u8x8_t* u8x8,
+            uint8_t msg,
+                uint8_t arg_int,
+                    void* arg_ptr);
 
+                    extern uint8_t u8x8_gpio_and_delay_esp32(
+                        u8x8_t* u8x8,
+                            uint8_t msg,
+                                uint8_t arg_int,
+                                    void* arg_ptr);
+
+*/
 static u8g2_t u8g2;
 
 static const char* TAG = "FuriHalDisplay";
@@ -95,11 +108,7 @@ void furi_hal_display_init(void)
                                                             i2c_param_config(I2C_NUM_0, &conf);
                                                                 i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
 
-                                                                    u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-                                                                            &u8g2,
-                                                                                    U8G2_R0,
-                                                                                            u8x8_byte_hw_i2c,
-                                                                                                    u8x8_gpio_and_delay_esp32);
+                                                                    uint8_t u8g2_gpio_and_delay_esp32(&u8g2, U8G2_R0, u8x8_hw_spi_esp32, u8g2_gpio_and_delay_esp32);
 
                                                                                                         u8g2_InitDisplay(&u8g2);
                                                                                                             u8g2_SetPowerSave(&u8g2,0);
@@ -111,13 +120,13 @@ void furi_hal_display_init(void)
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {
-UNUSED(size);
+(void)size;
 memcpy(u8g2_GetBufferPtr(&u8g2), data, 1024);
 u8g2_SendBuffer(&u8g2);
             }
 
 void furi_hal_display_set_backlight(uint8_t brightness) {
-    UNUSED(brightness);
+    (void)brightness;
 }
 
 void furi_hal_display_sleep(void) {
@@ -138,15 +147,14 @@ esp_lcd_panel_handle_t furi_hal_display_get_panel_handle(void) {
 }
 
 void furi_hal_display_set_fg_color(uint16_t color) {
-}
-
+        fg_color = color;
+        }
 uint16_t furi_hal_display_get_fg_color(void) {
-    return 1;
-}
-
+            return fg_color;
+            }
 void furi_hal_display_set_bg_color(uint16_t color) {
-}
-
+                bg_color = color;
+                }
 uint16_t furi_hal_display_get_bg_color(void) {
-    return 0;
-}
+                    return bg_color;
+                    }
