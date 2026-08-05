@@ -47,8 +47,8 @@
 #define BOARD_LCD_GAP_X         0
 #define BOARD_LCD_GAP_Y         0
 
-#define BOARD_PIN_OLED_SDA      8
-#define BOARD_PIN_OLED_SCL      18
+#define BOARD_PIN_OLED_SDA      41
+#define BOARD_PIN_OLED_SCL      42
 
 #define BOARD_OLED_I2C_PORT     I2C_NUM_0
 #define BOARD_OLED_ADDR         0x3C
@@ -118,7 +118,7 @@ l
 #define BOARD_WS2812_LED_COUNT  8
 
 /* ---- Microphone (I2S PDM) ---- */
-#define BOARD_PIN_MIC_DATA      42
+#define BOARD_PIN_MIC_DATA      -1
 #define BOARD_PIN_MIC_CLK       39
 
 /* ---- Qwiic / External I2C (shared with NFC) ---- */
