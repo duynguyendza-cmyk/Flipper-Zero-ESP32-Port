@@ -105,27 +105,18 @@ void furi_hal_display_init(void)
                                             .scl_pullup_en = GPIO_PULLUP_ENABLE,
                                                     .master.clk_speed = 400000,
                                                         };
-ssd1306_init();
                                                             i2c_param_config(I2C_NUM_0, &conf);
-                                                                i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
+                                                            i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
+                                                            ssd1306_init();
                                                     }
-                                                                    /*u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-                                                                            &u8g2,
-                                                                                U8G2_R0,
-                                                                                    u8x8_byte_hw_i2c,
-                                                                                        u8x8_gpio_and_delay_esp32);*/
-                                                                                                       /** u8g2_InitDisplay(&u8g2);
-                                                                                                            u8g2_SetPowerSave(&u8g2,0);
-                                                                                                                u8g2_ClearBuffer(&u8g2);
-                                                                                                                    u8g2_SendBuffer(&u8g2);
-                                                                                                                    }*/
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {
 (void)size;
-memcpy(u8g2_GetBufferPtr(&u8g2), data, 1024);
-u8g2_SendBuffer(&u8g2);
-            }
+memcpy(u8g2_GetBufferPtr(&g_u8g2), data, 1024);
+
+ u8g2_SendBuffer(&g_u8g2);
+}
 
 void furi_hal_display_set_backlight(uint8_t brightness) {
     (void)brightness;
