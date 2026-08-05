@@ -19,7 +19,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
-#include "u8g2_glue.h"
+//#include "u8g2_glue.h"
 #include <driver/i2c.h>
 #include "u8x8.h"
 #include "oled/u8g2_glue.h"
@@ -108,7 +108,12 @@ void furi_hal_display_init(void)
                                                             i2c_param_config(I2C_NUM_0, &conf);
                                                                 i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
 
-                                                                    uint8_t u8g2_gpio_and_delay_esp32(&u8g2, U8G2_R0, u8x8_hw_spi_esp32, u8g2_gpio_and_delay_esp32);
+                                                                    u8g2_Setup_st756x_flipper(
+                                                                            &u8g2,
+                                                                                U8G2_R0,
+                                                                                    u8x8_hw_spi_esp32,
+                                                                                        u8x8_gpio_and_delay_esp32);
+                                                                    
 
                                                                                                         u8g2_InitDisplay(&u8g2);
                                                                                                             u8g2_SetPowerSave(&u8g2,0);
