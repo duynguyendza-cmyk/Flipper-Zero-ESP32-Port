@@ -11,7 +11,7 @@
 
 static i2c_cmd_handle_t cmd = NULL;
 
-static uint8_t tx_buf[33];
+static uint8_t tx_buf[129];
 static uint8_t tx_len = 0;
 static uint8_t is_cmd = 0;
 
@@ -41,12 +41,16 @@ uint8_t u8x8_byte_hw_i2c(
                                                                                                 for(uint8_t i = 0; i < arg_int; i++) {
 
                                                                                                             if(tx_len >= sizeof(tx_buf)) {
-                                                                                                                            i2c_master_write_to_device(
-                                                                                                                                                OLED_I2C_PORT,
-                                                                                                                                                                    OLED_ADDR,
-                                                                                                                                                                                        tx_buf,
-                                                                                                                                                                                                            tx_len,
-                                                                                                                                                                                                                                pdMS_TO_TICKS(100));
+                                                                                                        esp_err_t ret =
+                                                                                                            i2c_master_write_to_device(
+                                                                                                                    OLED_I2C_PORT,
+                                                                                                                            OLED_ADDR,
+                                                                                                                                    tx_buf,
+                                                                                                                                            tx_len,
+                                                                                                                                                    pdMS_TO_TICKS(100));
+tx_len = 0;
+                                                                                                                                                    if(ret != ESP_OK)
+                                                                                                                                                        return 0;
 
                                                                                                                                                                                                                                                 tx_len = 1;
                                                                                                                                                                                                                                                                 tx_buf[0] = is_cmd ? 0x00 : 0x40;
@@ -71,6 +75,7 @@ uint8_t u8x8_byte_hw_i2c(
 
                                                                                                                                                                                                                                                                                                                                                                                                 case U8X8_MSG_BYTE_SET_DC:
                                                                                                                                                                                                                                                                                                                                                                                                         is_cmd = (arg_int == 0);
+                                                                                                                                                                                                                                                                                                                                                                                                        tx_len = 0;
                                                                                                                                                                                                                                                                                                                                                                                                                 tx_len = 1;
                                                                                                                                                                                                                                                                                                                                                                                                                         tx_buf[0] = is_cmd ? 0x00 : 0x40;
                                                                                                                                                                                                                                                                                                                                                                                                                                 return 1;
@@ -81,18 +86,34 @@ uint8_t u8x8_byte_hw_i2c(
 
 
 uint8_t u8x8_gpio_and_delay_esp32(
-u8x8_t* u8x8,
-uint8_t msg,
-uint8_t arg_int,
-void* arg_ptr)
-{
-switch(msg)
-{
-case U8X8_MSG_DELAY_MILLI:
-vTaskDelay(pdMS_TO_TICKS(arg_int));
-return 1;
-case U8X8_MSG_GPIO_AND_DELAY_INIT:
-return 1;
-}
-return 1;
-}
+        u8x8_t* u8x8,
+            uint8_t msg,
+                uint8_t arg_int,
+                    void* arg_ptr)
+                    {
+                        switch(msg)
+                            {
+                                case U8X8_MSG_GPIO_AND_DELAY_INIT:
+                                        return 1;
+
+                                            case U8X8_MSG_DELAY_MILLI:
+                                                    vTaskDelay(pdMS_TO_TICKS(arg_int));
+                                                            return 1;
+
+                                                                case U8X8_MSG_DELAY_10MICRO:
+                                                                        ets_delay_us(arg_int * 10);
+                                                                                return 1;
+
+                                                                                    case U8X8_MSG_DELAY_100NANO:
+                                                                                            return 1;
+
+                                                                                                case U8X8_MSG_GPIO_RESET:
+                                                                                                        return 1;
+
+                                                                                                            case U8X8_MSG_GPIO_DC:
+                                                                                                                    return 1;
+
+                                                                                                                        default:
+                                                                                                                                return 1;
+                                                                                                                                    }
+                                                                                                                                    }

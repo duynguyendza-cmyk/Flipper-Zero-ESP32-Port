@@ -21,6 +21,7 @@ u8x8_SetI2CAddress(
             0x3C<<1);
 
             u8g2_InitDisplay(&g_u8g2);
+            u8g2_SetContrast(&g_u8g2, 255);
             u8g2_SetPowerSave(&g_u8g2, 0);
             u8g2_ClearBuffer(&g_u8g2);
             u8g2_SendBuffer(&g_u8g2);
