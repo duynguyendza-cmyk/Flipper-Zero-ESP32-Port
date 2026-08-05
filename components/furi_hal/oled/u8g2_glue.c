@@ -5,11 +5,12 @@
 #include <freertos/task.h>
 
 #include <string.h>
+#include <esp_log.h>
+#include <esp_rom_sys.h>
 
 #define OLED_I2C_PORT I2C_NUM_0
 #define OLED_ADDR 0x3C
 
-static i2c_cmd_handle_t cmd = NULL;
 
 static uint8_t tx_buf[129];
 static uint8_t tx_len = 0;
@@ -42,16 +43,17 @@ uint8_t u8x8_byte_hw_i2c(
 
                                                                                                             if(tx_len >= sizeof(tx_buf)) {
                                                                                                         esp_err_t ret =
-                                                                                                            i2c_master_write_to_device(
-                                                                                                                    OLED_I2C_PORT,
-                                                                                                                            OLED_ADDR,
-                                                                                                                                    tx_buf,
-                                                                                                                                            tx_len,
-                                                                                                                                                    pdMS_TO_TICKS(100));
-tx_len = 0;
-                                                                                                                                                    if(ret != ESP_OK)
-                                                                                                                                                    ESP_LOGE("OLED","I2C write fail %d",err);
-                                                                                                                                                       // return 0;
+                                                                                                            esp_err_t err =
+                                                                                                                i2c_master_write_to_device(
+                                                                                                                        OLED_I2C_PORT,
+                                                                                                                                OLED_ADDR,
+                                                                                                                                        tx_buf,
+                                                                                                                                                tx_len,
+                                                                                                                                                        pdMS_TO_TICKS(100));
+
+                                                                                                                                                        if (err != ESP_OK) {
+                                                                                                                                                            ESP_LOGE("OLED", "I2C write fail %s", esp_err_to_name(err));
+                                                                                                                                                            }
 
                                                                                                                                                                                                                                                 tx_len = 1;
                                                                                                                                                                                                                                                                 tx_buf[0] = is_cmd ? 0x00 : 0x40;
@@ -102,7 +104,7 @@ uint8_t u8x8_gpio_and_delay_esp32(
                                                             return 1;
 
                                                                 case U8X8_MSG_DELAY_10MICRO:
-                                                                        ets_delay_us(arg_int * 10);
+                                                                        esp_rom_delay_us(arg_int * 10);
                                                                                 return 1;
 
                                                                                     case U8X8_MSG_DELAY_100NANO:
