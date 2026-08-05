@@ -22,6 +22,7 @@
 #include <driver/i2c.h>
 #include <u8g2.h>
 #include <u8x8.h>
+#include "oled/u8g2_glue.h"
 
 static u8g2_t u8g2;
 
