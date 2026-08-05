@@ -21,7 +21,7 @@ idf_component_register(
         "u8x8_gpio.c"
         "u8x8_setup.c"
         
-        "u8x8_d_ssd1306_128x64_noname.c"
+        u8x8_d_ssd1306_128x64_noname.c
 
     INCLUDE_DIRS
         "."
