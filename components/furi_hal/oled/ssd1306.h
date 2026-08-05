@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <u8g2.h>
+#include <u8x8.h>
+
 extern u8g2_t g_u8g2;
 
 void ssd1306_init(void);

@@ -26,7 +26,7 @@
 
 extern u8g2_t g_u8g2;
 
-static const char* TAG = "FuriHalDisplay";
+//static const char* TAG = "FuriHalDisplay";
 
 /* Display dimensions from board config */
 #define LCD_H_RES BOARD_LCD_H_RES
