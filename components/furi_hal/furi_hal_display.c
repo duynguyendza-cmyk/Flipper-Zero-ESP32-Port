@@ -82,52 +82,8 @@ static uint16_t bg_color;
 
 void furi_hal_display_init(void)
 {
-    esp_err_t err;
-
-        i2c_config_t conf = {
-                .mode = I2C_MODE_MASTER,
-                        .sda_io_num = 41,
-                                .scl_io_num = 42,
-                                        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-                                                .scl_pullup_en = GPIO_PULLUP_ENABLE,
-                                                        .master.clk_speed = 100000,
-                                                            };
-
-                                                                err = i2c_param_config(I2C_NUM_0, &conf);
-                                                                    ESP_ERROR_CHECK(err);
-
-                                                                        err = i2c_driver_install(
-                                                                                I2C_NUM_0,
-                                                                                        conf.mode,
-                                                                                                0,
-                                                                                                        0,
-                                                                                                                0);
-err = i2c_driver_install(
-        I2C_NUM_0,
-            conf.mode,
-                0,
-                    0,
-                        0);
-
-                ESP_LOGI("I2C", "driver_install = %s", esp_err_to_name(err));
-
-                            // Scan I2C
-                            ESP_LOGI("I2C", "Scanning...");
-                            for (uint8_t addr = 1; addr < 127; addr++) {
-                                esp_err_t ret = i2c_master_write_to_device(
-                                        I2C_NUM_0,
-                                                addr,
-                                                        NULL,
-                                                                0,
-                                                                        pdMS_TO_TICKS(20));
-
-                                                                            if (ret == ESP_OK) {
-                                                                                    ESP_LOGI("I2C", "Found device at 0x%02X", addr);
-                                                                                        }
-                                                                                        }
-
-                                                                                        ssd1306_init();
-                                                                                    }
+    ssd1306_init();
+    }
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {(void)size;
