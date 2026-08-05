@@ -109,9 +109,7 @@ err = i2c_driver_install(
                     0,
                         0);
 
-                        if(err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
-                            ESP_ERROR_CHECK(err);
-                            }
+                ESP_LOGI("I2C", "driver_install = %s", esp_err_to_name(err));
 
                             // Scan I2C
                             ESP_LOGI("I2C", "Scanning...");
