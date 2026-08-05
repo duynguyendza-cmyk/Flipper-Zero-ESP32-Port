@@ -5,14 +5,14 @@
 #define CONTRAST_ERC 32
 #define CONTRAST_MGG 28
 
-
+/**
 uint8_t u8x8_gpio_and_delay_esp32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, void* arg_ptr) {
     UNUSED(u8x8);
     UNUSED(arg_ptr);
     switch(msg) {
     case U8X8_MSG_GPIO_AND_DELAY_INIT:
         /* No hardware init needed for stub */
-        break;
+      /** break;
     case U8X8_MSG_DELAY_MILLI:
         furi_delay_ms(arg_int);
         break;
@@ -20,17 +20,17 @@ uint8_t u8x8_gpio_and_delay_esp32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, vo
         furi_delay_us(10);
         break;
     case U8X8_MSG_DELAY_100NANO:
-        /* No-op: sub-microsecond delay not needed on ESP32 stub */
+
         break;
     case U8X8_MSG_GPIO_RESET:
-        /* Stub: no real GPIO reset on ESP32 */
+    
         break;
     default:
         break;
     }
 
     return 1;
-}
+}*/
 
 uint8_t u8x8_hw_spi_esp32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, void* arg_ptr) {
     UNUSED(u8x8);
