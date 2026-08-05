@@ -37,7 +37,8 @@ extern uint8_t u8x8_byte_hw_i2c(
                                     void* arg_ptr);
 
 */
-static u8g2_t u8g2;
+extern u8g2_t g_u8g2;
+#define u8g2 g_u8g2
 
 static const char* TAG = "FuriHalDisplay";
 
@@ -104,26 +105,20 @@ void furi_hal_display_init(void)
                                             .scl_pullup_en = GPIO_PULLUP_ENABLE,
                                                     .master.clk_speed = 400000,
                                                         };
-
+ssd1306_init();
                                                             i2c_param_config(I2C_NUM_0, &conf);
                                                                 i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
-
-                                                                    u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+                                                    }
+                                                                    /*u8g2_Setup_ssd1306_i2c_128x64_noname_f(
                                                                             &u8g2,
                                                                                 U8G2_R0,
                                                                                     u8x8_byte_hw_i2c,
-                                                                                        u8x8_gpio_and_delay_esp32);
-                                                                                        u8x8_SetI2CAddress(
-                                                                                                &u8g2.u8x8,
-                                                                                                    0x3C << 1);
-                                                                                        
-                                                                                                        u8g2_InitDisplay(&u8g2);
+                                                                                        u8x8_gpio_and_delay_esp32);*/
+                                                                                                       /** u8g2_InitDisplay(&u8g2);
                                                                                                             u8g2_SetPowerSave(&u8g2,0);
                                                                                                                 u8g2_ClearBuffer(&u8g2);
                                                                                                                     u8g2_SendBuffer(&u8g2);
-                                                                                                                    }
-
-
+                                                                                                                    }*/
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {

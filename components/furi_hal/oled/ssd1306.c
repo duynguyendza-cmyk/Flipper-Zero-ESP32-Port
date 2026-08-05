@@ -7,7 +7,7 @@
 #include <string.h>
 #include <driver/i2c.h>
 
-static u8g2_t u8g2;
+u8g2_t g_u8g2;
 
 void ssd1306_init(void)
 {
@@ -16,7 +16,9 @@ void ssd1306_init(void)
                     U8G2_R0,
                             u8x8_byte_hw_i2c,
                                     u8x8_gpio_and_delay_esp32);
-
+u8x8_SetI2CAddress(
+        &g_u8g2.u8x8,
+            0x3C<<1);
                                         u8g2_InitDisplay(&u8g2);
                                             u8g2_SetPowerSave(&u8g2, 0);
                                                 u8g2_ClearBuffer(&u8g2);
