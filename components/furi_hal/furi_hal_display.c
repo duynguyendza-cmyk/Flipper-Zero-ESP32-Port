@@ -19,24 +19,11 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
-//#include "u8g2_glue.h"
 #include <driver/i2c.h>
 #include "u8x8.h"
 #include "oled/u8g2_glue.h"
-/**
-extern uint8_t u8x8_byte_hw_i2c(
-        u8x8_t* u8x8,
-            uint8_t msg,
-                uint8_t arg_int,
-                    void* arg_ptr);
+#include "oled/ssd1306.h"
 
-                    extern uint8_t u8x8_gpio_and_delay_esp32(
-                        u8x8_t* u8x8,
-                            uint8_t msg,
-                                uint8_t arg_int,
-                                    void* arg_ptr);
-
-*/
 extern u8g2_t g_u8g2;
 #define u8g2 g_u8g2
 
