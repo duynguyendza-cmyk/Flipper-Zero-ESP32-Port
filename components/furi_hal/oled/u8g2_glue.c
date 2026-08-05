@@ -42,7 +42,6 @@ uint8_t u8x8_byte_hw_i2c(
                                                                                                 for(uint8_t i = 0; i < arg_int; i++) {
 
                                                                                                             if(tx_len >= sizeof(tx_buf)) {
-                                                                                                        esp_err_t ret =
                                                                                                             esp_err_t err =
                                                                                                                 i2c_master_write_to_device(
                                                                                                                         OLED_I2C_PORT,
@@ -65,20 +64,31 @@ uint8_t u8x8_byte_hw_i2c(
                                                                                                                                                                                                                                                                                                         return 1;
                                                                                                                                                                                                                                                                                                             }
 
-                                                                                                                                                                                                                                                                                                                case U8X8_MSG_BYTE_END_TRANSFER:
+case U8X8_MSG_BYTE_END_TRANSFER:
+{
+    esp_err_t err =
+            i2c_master_write_to_device(
+                        OLED_I2C_PORT,
+                                    OLED_ADDR,
+                                                tx_buf,
+                                                            tx_len,
+                                                                        pdMS_TO_TICKS(100));
 
-                                                                                                                                                                                                                                                                                                                        i2c_master_write_to_device(
-                                                                                                                                                                                                                                                                                                                                    OLED_I2C_PORT,
-                                                                                                                                                                                                                                                                                                                                                OLED_ADDR,
-                                                                                                                                                                                                                                                                                                                                                            tx_buf,
-                                                                                                                                                                                                                                                                                                                                                                        tx_len,
-                                                                                                                                                                                                                                                                                                                                                                                    pdMS_TO_TICKS(100));
+                                                                            if(err != ESP_OK) {
+                                                                                    ESP_LOGE("OLED",
+                                                                                             "END_TRANSFER: %s port=%d addr=0x%02X len=%d",
+                                                                                                      esp_err_to_name(err),
+                                                                                                               OLED_I2C_PORT,
+                                                                                                                        OLED_ADDR,
+                                                                                                                                 tx_len);
+                                                                                        }
 
-                                                                                                                                                                                                                                                                                                                                                                                            return 1;
+                                                                                            tx_len = 0;
+                                                                                                return 1;
+                                                                                                }
 
                                                                                                                                                                                                                                                                                                                                                                                                 case U8X8_MSG_BYTE_SET_DC:
                                                                                                                                                                                                                                                                                                                                                                                                         is_cmd = (arg_int == 0);
-                                                                                                                                                                                                                                                                                                                                                                                                        tx_len = 0;
                                                                                                                                                                                                                                                                                                                                                                                                                 tx_len = 1;
                                                                                                                                                                                                                                                                                                                                                                                                                         tx_buf[0] = is_cmd ? 0x00 : 0x40;
                                                                                                                                                                                                                                                                                                                                                                                                                                 return 1;
