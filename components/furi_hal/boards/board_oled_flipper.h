@@ -47,12 +47,11 @@
 #define BOARD_LCD_GAP_X         0
 #define BOARD_LCD_GAP_Y         0
 
-#define BOARD_PIN_OLED_SDA      41
-#define BOARD_PIN_OLED_SCL      42
+#define BOARD_PIN_QWIIC_SDA 41
+#define BOARD_PIN_QWIIC_SCL 42
 
-#define BOARD_OLED_I2C_PORT     I2C_NUM_0
-#define BOARD_OLED_ADDR         0x3C
-l
+#define BOARD_OLED_I2C_PORT I2C_NUM_1
+
 /* Flipper framebuffer → display color mapping (RGB565, native byte order) */
 #define BOARD_LCD_FG_COLOR      0xA0FD  /* Flipper Orange 0xFDA0 byte-swapped for S3 SPI */
 #define BOARD_LCD_FG_COLOR_RB   0x5F03  /* Same orange with R/B swapped (0x035F swapped) — for post-flash BGR state */

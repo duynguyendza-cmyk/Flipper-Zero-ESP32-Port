@@ -8,8 +8,10 @@
 #include <esp_log.h>
 #include <esp_rom_sys.h>
 
-#define OLED_I2C_PORT I2C_NUM_0
-#define OLED_ADDR 0x3C
+#include "boards/board.h"
+
+#define OLED_I2C_PORT BOARD_OLED_I2C_PORT
+#define OLED_ADDR     BOARD_OLED_ADDR
 
 
 static uint8_t tx_buf[129];
