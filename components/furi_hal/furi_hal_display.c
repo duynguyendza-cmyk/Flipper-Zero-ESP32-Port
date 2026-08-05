@@ -119,6 +119,9 @@ void furi_hal_display_init(void)
                                                                                         
                                                                                                         u8g2_InitDisplay(&u8g2);
                                                                                                             u8g2_SetPowerSave(&u8g2,0);
+                                                                                                            u8g2_ClearBuffer(&u8g2);
+                                                                                                            u8g2_DrawStr(&u8g2, 0, 15, "HELLO");
+                                                                                                            u8g2_SendBuffer(&u8g2);
                                                                                                                 u8g2_ClearBuffer(&u8g2);
                                                                                                                     u8g2_SendBuffer(&u8g2);
                                                                                                                     }
