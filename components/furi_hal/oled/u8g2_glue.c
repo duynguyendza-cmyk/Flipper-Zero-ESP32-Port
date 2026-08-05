@@ -50,7 +50,8 @@ uint8_t u8x8_byte_hw_i2c(
                                                                                                                                                     pdMS_TO_TICKS(100));
 tx_len = 0;
                                                                                                                                                     if(ret != ESP_OK)
-                                                                                                                                                        return 0;
+                                                                                                                                                    ESP_LOGE("OLED","I2C write fail %d",err);
+                                                                                                                                                       // return 0;
 
                                                                                                                                                                                                                                                 tx_len = 1;
                                                                                                                                                                                                                                                                 tx_buf[0] = is_cmd ? 0x00 : 0x40;

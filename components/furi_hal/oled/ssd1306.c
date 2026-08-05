@@ -24,6 +24,8 @@ u8x8_SetI2CAddress(
             u8g2_SetContrast(&g_u8g2, 255);
             u8g2_SetPowerSave(&g_u8g2, 0);
             u8g2_ClearBuffer(&g_u8g2);
+            u8g2_SetFont(&g_u8g2,u8g2_font_6x10_tf);
+            u8g2_DrawStr(&g_u8g2,0,20,"HELLO");
             u8g2_SendBuffer(&g_u8g2);
 }
 
