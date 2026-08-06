@@ -29,34 +29,16 @@
 #define BOARD_PIN_ENCODER_B     5
 #define BOARD_PIN_ENCODER_BTN   0   /* Same as BOOT button */
 
-/* ---- LCD Pins (ST7789 via SPI) ---- */
-#define BOARD_PIN_LCD_MOSI      9
-#define BOARD_PIN_LCD_SCLK      11
-#define BOARD_PIN_LCD_DC        16
-#define BOARD_PIN_LCD_CS        41
-#define BOARD_PIN_LCD_RST       40
-#define BOARD_PIN_LCD_BL        21  /* Backlight PWM */
+/* ---- OLED SSD1306 (I2C1) ---- */
+#define BOARD_HAS_OLED          1
 
-/* ---- LCD Display Configuration ---- */
-#define BOARD_LCD_H_RES         320     /* Native width after swap_xy */
-#define BOARD_LCD_V_RES         170     /* Native height after swap_xy */
-#define BOARD_LCD_SPI_HOST      SPI2_HOST
-#define BOARD_LCD_SPI_FREQ_HZ   (40 * 1000 * 1000)
-#define BOARD_LCD_CMD_BITS      8
-#define BOARD_LCD_PARAM_BITS    8
-#define BOARD_LCD_SWAP_XY       true
-#define BOARD_LCD_MIRROR_X      false   /* 180° rotated vs Waveshare */
-#define BOARD_LCD_MIRROR_Y      true    /* 180° rotated vs Waveshare */
-#define BOARD_LCD_INVERT_COLOR  true    /* T-Embed ST7789 uses display inversion ON */
-#define BOARD_LCD_GAP_X         0       /* TODO: verify gap on hardware */
-#define BOARD_LCD_GAP_Y         35      /* TODO: verify gap on hardware */
-#define BOARD_LCD_BL_ACTIVE_LOW false   /* Backlight is active-high */
-#define BOARD_LCD_COLOR_ORDER_BGR false /* RGB order with esp_lcd driver */
+#define BOARD_PIN_OLED_SDA      41
+#define BOARD_PIN_OLED_SCL      42
 
-/* Flipper framebuffer → display color mapping (RGB565, native byte order) */
-#define BOARD_LCD_FG_COLOR      0xA0FD  /* Flipper Orange 0xFDA0 byte-swapped for S3 SPI */
-#define BOARD_LCD_FG_COLOR_RB   0x5F03  /* Same orange with R/B swapped (0x035F swapped) — for post-flash BGR state */
-#define BOARD_LCD_BG_COLOR      0x0000  /* Black */
+#define BOARD_OLED_I2C_PORT     I2C_NUM_1
+#define BOARD_OLED_ADDR         0x3C
+#define BOARD_OLED_I2C_FREQ_HZ  400000
+#define BOARD_OLED_I2C_TIMEOUT  1000
 
 /* ---- SD Card Pins (shared SPI bus with LCD and CC1101) ---- */
 #define BOARD_PIN_SD_CS         13
@@ -130,9 +112,9 @@
 #define BOARD_HAS_ENCODER       1
 #define BOARD_HAS_SD_CARD       1
 #define BOARD_HAS_BLE           1
-#define BOARD_HAS_RGB_LED       1
+#define BOARD_HAS_RGB_LED       0
 #define BOARD_HAS_VIBRO         0
-#define BOARD_HAS_SPEAKER       1
+#define BOARD_HAS_SPEAKER       0
 #define BOARD_HAS_IR            1
 #define BOARD_HAS_IBUTTON       0
 #define BOARD_HAS_RFID          1
