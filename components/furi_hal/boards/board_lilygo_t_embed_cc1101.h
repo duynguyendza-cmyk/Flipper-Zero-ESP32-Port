@@ -32,12 +32,12 @@
 /* ---- OLED SSD1306 (I2C1) ---- */
 #define BOARD_HAS_OLED          1
 
-#define BOARD_PIN_OLED_SDA      41
-#define BOARD_PIN_OLED_SCL      42
+#define BOARD_PIN_OLED_SDA      15
+#define BOARD_PIN_OLED_SCL      16
 
 #define BOARD_OLED_I2C_PORT     I2C_NUM_1
 #define BOARD_OLED_ADDR         0x3C
-#define BOARD_OLED_I2C_FREQ_HZ  100000
+#define BOARD_OLED_I2C_FREQ_HZ  400000
 #define BOARD_OLED_I2C_TIMEOUT  1000
 
 /* ---- SD Card Pins (shared SPI bus with LCD and CC1101) ---- */
