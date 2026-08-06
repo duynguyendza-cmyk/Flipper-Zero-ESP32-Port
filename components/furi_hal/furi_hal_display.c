@@ -110,7 +110,7 @@ ssd1306_draw_bitmap(data);
 
 void furi_hal_display_set_backlight(uint8_t value) {
         ssd1306_set_contrast(value);
-}
+        }
 
 void furi_hal_display_sleep(void) {
 }

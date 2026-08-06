@@ -31,7 +31,7 @@ void furi_hal_display_commit(const uint8_t* data, uint32_t size);
  *
  * @param      brightness  brightness level [0-255]
  */
-void furi_hal_display_set_backlight(uint8_t brightness);
+void furi_hal_display_set_backlight(uint8_t value);
 
 /** Put the display panel into sleep mode (ST7789 SLPIN + display off).
  *
