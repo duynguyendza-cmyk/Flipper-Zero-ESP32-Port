@@ -24,15 +24,8 @@ u8x8_SetI2CAddress(
             u8g2_SetContrast(&g_u8g2, 255);
             u8g2_SetPowerSave(&g_u8g2, 0);
             u8g2_ClearBuffer(&g_u8g2);
-            const char *text = "Khang iu";
-
-            int w = u8g2_GetStrWidth(&g_u8g2, text);
-            int h = u8g2_GetAscent(&g_u8g2) - u8g2_GetDescent(&g_u8g2);
-
-            int x = (u8g2_GetDisplayWidth(&g_u8g2) - w) / 2;
-            int y = (u8g2_GetDisplayHeight(&g_u8g2) + h) / 2;
-
-            u8g2_DrawStr(&g_u8g2, x, y, text);
+            u8g2_SetFont(&g_u8g2,u8g2_font_6x10_tf);
+            u8g2_DrawStr(&g_u8g2,0,20,"HELLO");
             u8g2_SendBuffer(&g_u8g2);
             /*u8g2_InitDisplay(&g_u8g2);
             u8g2_SetPowerSave(&g_u8g2, 0);
