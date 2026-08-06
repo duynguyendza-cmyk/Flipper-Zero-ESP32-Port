@@ -298,31 +298,6 @@ build_for_target() {
             -I"$IDF/esp_rom/esp32s3"
         )
         TARGET_CFLAGS+=(-DBOARD_INCLUDE=\"board_lilygo_t_embed_cc1101.h\")
-    elif [ "$IDF_TARGET" = "esp32c6" ]; then
-        TARGET_CFLAGS+=(-march=rv32imac_zicsr_zifencei)
-        TARGET_INCLUDES+=(
-            -I"$IDF/freertos/config/riscv/include"
-            -I"$IDF/freertos/config/include"
-            -I"$IDF/freertos/config/include/freertos"
-            -I"$IDF/freertos/FreeRTOS-Kernel/include"
-            -I"$IDF/freertos/FreeRTOS-Kernel/portable/riscv/include"
-            -I"$IDF/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos"
-            -I"$IDF/freertos/esp_additions/include"
-            -I"$IDF/riscv/include"
-            -I"$IDF/soc/esp32c6/include"
-            -I"$IDF/soc/esp32c6/register"
-            -I"$IDF/soc/esp32c6"
-            -I"$IDF/soc/include"
-            -I"$IDF/hal/esp32c6/include"
-            -I"$IDF/hal/include"
-            -I"$IDF/hal/platform_port/include"
-            -I"$IDF/esp_hw_support/port/esp32c6/."
-            -I"$IDF/esp_hw_support/port/esp32c6/include"
-            -I"$IDF/esp_rom/esp32c6/include"
-            -I"$IDF/esp_rom/esp32c6/include/esp32c6"
-            -I"$IDF/esp_rom/esp32c6"
-        )
-        TARGET_CFLAGS+=(-DBOARD_INCLUDE=\"board_waveshare_c6_1.9.h\")
     fi
 
     TARGET_CFLAGS+=(-DFAP_VERSION=\"1.0\")
