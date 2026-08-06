@@ -30,13 +30,6 @@ uint8_t u8x8_byte_hw_i2c(
 
                             case U8X8_MSG_BYTE_INIT:
                                     return 1;
-
-                                        case U8X8_MSG_BYTE_START_TRANSFER:
-                                                tx_len = 1;
-                                                        is_cmd = 1;
-                                                                tx_buf[0] = 0x00;   // Command mode
-                                                                        return 1;
-
                                                                             case U8X8_MSG_BYTE_SEND:
                                                                                 {
                                                                                 ESP_LOGI("OLED", "SEND %d bytes, is_cmd=%d", arg_int, is_cmd);
@@ -90,19 +83,10 @@ case U8X8_MSG_BYTE_END_TRANSFER:
                                                                                             tx_len = 0;
                                                                                                 return 1;
                                                                                                 }
-
-                                                                                                                                                                                                                                                                                                                                                                                                case U8X8_MSG_BYTE_SET_DC:
-                                                                                                                                                                                                                                                                                                                                                                                                ESP_LOGI("OLED", "SET_DC %d", arg_int);
-                                                                                                                                                                                                                                                                                                                                                                                                    is_cmd = (arg_int == 0);
-                                                                                                                                                                                                                                                                                                                                                                                                                tx_len = 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                        tx_buf[0] = is_cmd ? 0x00 : 0x40;
-                                                                                                                                                                                                                                                                                                                                                                                                                                return 1;
                                                                                                                                                                                                                                                                                                                                                                                                                                     }
 
                                                                                                                                                                                                                                                                                                                                                                                                                                         return 0;
                                                                                                                                                                                                                                                                                                                                                                                                                                         }
-
-
 uint8_t u8x8_gpio_and_delay_esp32(
         u8x8_t* u8x8,
             uint8_t msg,
