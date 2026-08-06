@@ -103,19 +103,25 @@ i2c_config_t conf = {
                                                 if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
                                                     ESP_ERROR_CHECK(err);
                                                     }
-uint8_t dummy = 0;
+for (uint8_t addr = 1; addr < 127; addr++) {
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 
-for(uint8_t addr = 1; addr < 127; addr++) {
-    if(i2c_master_write_to_device(
-                BOARD_OLED_I2C_PORT,
-                            addr,
-                                        &dummy,
-                                                    1,
-                                                                pdMS_TO_TICKS(20)) == ESP_OK) {
+            i2c_master_start(cmd);
+                i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
+                    i2c_master_stop(cmd);
 
-                                                                        ESP_LOGI("OLED", "Found device at 0x%02X", addr);
-                                                                            }
-                                                                            }
+                        esp_err_t ret = i2c_master_cmd_begin(
+                                BOARD_OLED_I2C_PORT,
+                                        cmd,
+                                                pdMS_TO_TICKS(50));
+
+                                                    i2c_cmd_link_delete(cmd);
+
+                                                        if (ret == ESP_OK) {
+                                                                ESP_LOGI("SCAN", "Found 0x%02X", addr);
+                                                                    }
+                                                                    }
+
 
     ssd1306_init();
     ESP_LOGI("OLED",
