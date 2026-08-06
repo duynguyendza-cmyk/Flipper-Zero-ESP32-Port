@@ -112,7 +112,7 @@ const uint32_t night_shift_end_value[NIGHT_SHIFT_END_COUNT] = {
     500, 530, 560, 590, 620, 650, 680,
 };
 // --- NIGHT SHIFT END ---
-
+/**
 static void backlight_changed(VariableItem* item) {
     NotificationAppSettings* app = variable_item_get_context(item);
     uint8_t index = variable_item_get_current_value_index(item);
@@ -121,7 +121,22 @@ static void backlight_changed(VariableItem* item) {
     app->notification->settings.display_brightness = backlight_value[index];
 
     notification_message(app->notification, &sequence_display_backlight_force_on);
-}
+}*/
+
+static void backlight_changed(VariableItem* item) {
+        NotificationAppSettings* app = variable_item_get_context(item);
+            uint8_t index = variable_item_get_current_value_index(item);
+
+                variable_item_set_current_value_text(item, backlight_text[index]);
+
+                    app->notification->settings.display_brightness = backlight_value[index];
+
+                        /* SSD1306 Contrast: 0~255 */
+                            furi_hal_display_set_backlight(
+                                    (uint8_t)(255.0f * backlight_value[index]));
+
+                                        notification_message_save_settings(app->notification);
+                                        }
 
 static void screen_changed(VariableItem* item) {
     NotificationAppSettings* app = variable_item_get_context(item);
@@ -458,7 +473,7 @@ static NotificationAppSettings* alloc_settings(void) {
 
     /* LCD Backlight brightness */
     item = variable_item_list_add(
-        app->variable_item_list, "LCD Backlight", BACKLIGHT_COUNT, backlight_changed, app);
+        app->variable_item_list, "OLED Brightness", BACKLIGHT_COUNT, backlight_changed, app);
     value_index = value_index_float(
         app->notification->settings.display_brightness, backlight_value, BACKLIGHT_COUNT);
     variable_item_set_current_value_index(item, value_index);
