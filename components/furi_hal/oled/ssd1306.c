@@ -23,9 +23,25 @@ u8x8_SetI2CAddress(
             u8g2_InitDisplay(&g_u8g2);
             u8g2_SetContrast(&g_u8g2, 255);
             u8g2_SetPowerSave(&g_u8g2, 0);
+            
             u8g2_ClearBuffer(&g_u8g2);
-            u8g2_SetFont(&g_u8g2,u8g2_font_6x10_tf);
-            u8g2_DrawStr(&g_u8g2,0,20,"HELLO");
+
+            u8g2_SetFont(&g_u8g2, u8g2_font_6x10_tf);
+
+            const char *text = "Khang iu";
+
+            // Chiều rộng chuỗi
+            int w = u8g2_GetStrWidth(&g_u8g2, text);
+
+            // Chiều cao font
+            int h = u8g2_GetAscent(&g_u8g2) - u8g2_GetDescent(&g_u8g2);
+
+            // Tính tọa độ giữa màn hình 128x64
+            int x = (128 - w) / 2;
+            int y = (64 + h) / 2;
+
+            u8g2_DrawStr(&g_u8g2, x, y, text);
+
             u8g2_SendBuffer(&g_u8g2);
             /*u8g2_InitDisplay(&g_u8g2);
             u8g2_SetPowerSave(&g_u8g2, 0);
