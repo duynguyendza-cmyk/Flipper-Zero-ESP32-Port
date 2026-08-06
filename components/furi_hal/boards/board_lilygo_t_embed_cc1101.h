@@ -25,8 +25,8 @@
 #define BOARD_PIN_BATTERY_ADC   UINT16_MAX  /* No battery ADC on this board */
 
 /* ---- Rotary Encoder ---- */
-#define BOARD_PIN_ENCODER_A     4
-#define BOARD_PIN_ENCODER_B     5
+#define BOARD_PIN_ENCODER_A     42
+#define BOARD_PIN_ENCODER_B     41
 #define BOARD_PIN_ENCODER_BTN   0   /* Same as BOOT button */
 
 /* ---- OLED SSD1306 (I2C1) ---- */
