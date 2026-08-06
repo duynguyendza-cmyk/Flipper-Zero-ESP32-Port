@@ -147,9 +147,6 @@ uint16_t furi_hal_display_get_v_res(void)
     return 64;
     }
 
-esp_lcd_panel_handle_t furi_hal_display_get_panel_handle(void) {
-    return NULL;
-}
 
 void furi_hal_display_set_fg_color(uint16_t color) {
         fg_color = color;

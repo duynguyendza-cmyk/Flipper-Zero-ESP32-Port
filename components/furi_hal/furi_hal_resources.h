@@ -38,14 +38,6 @@ extern const size_t input_pins_count;
 extern const GpioPin gpio_button_boot; /* GPIO9 - BOOT button (active low) */
 extern const GpioPin gpio_battery_sense; /* GPIO0 - BAT_ADC (VCC / 3) */
 
-/* LCD Pins (Waveshare ESP32-C6-LCD-1.9, ST7789V2) */
-extern const GpioPin gpio_lcd_din;  /* GPIO4  - SPI MOSI */
-extern const GpioPin gpio_lcd_clk;  /* GPIO5  - SPI SCLK */
-extern const GpioPin gpio_lcd_dc;   /* GPIO6  - Data/Command */
-extern const GpioPin gpio_lcd_cs;   /* GPIO7  - Chip Select */
-extern const GpioPin gpio_lcd_rst;  /* GPIO14 - Reset */
-extern const GpioPin gpio_lcd_bl;   /* GPIO15 - Backlight (PWM) */
-
 /* SD Card Pins (Waveshare ESP32-C6-LCD-1.9, shared SPI2_HOST) */
 extern const GpioPin gpio_sdcard_cs;   /* GPIO20 - SD Chip Select */
 extern const GpioPin gpio_sdcard_miso; /* GPIO19 - SD MISO */

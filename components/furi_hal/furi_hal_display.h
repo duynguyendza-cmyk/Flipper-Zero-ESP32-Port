@@ -8,7 +8,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <esp_lcd_types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,7 +75,6 @@ uint16_t furi_hal_display_get_v_res(void);
  * GUI service (gui_direct_draw_acquire). The Furi GUI HAL keeps rendering
  * its 128x64 framebuffer, so callers that do not pause the GUI will flicker.
  */
-esp_lcd_panel_handle_t furi_hal_display_get_panel_handle(void);
 
 #ifdef __cplusplus
 }

@@ -22,5 +22,3 @@
 #ifndef BOARD_NAME
 #error "Board header must define BOARD_NAME"
 #endif
-#ifndef BOARD_PIN_LCD_MOSI
-#endif
