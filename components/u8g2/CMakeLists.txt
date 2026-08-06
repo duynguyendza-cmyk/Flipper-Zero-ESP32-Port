@@ -7,7 +7,6 @@ idf_component_register(
         "u8g2_d_memory.c"
         "u8g2_font.c"
         "u8g2_fonts.c"
-        "u8g2_glue.c"
         "u8g2_hvline.c"
         "u8g2_intersection.c"
         "u8g2_line.c"
