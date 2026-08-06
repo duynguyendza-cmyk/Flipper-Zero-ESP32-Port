@@ -103,25 +103,27 @@ i2c_config_t conf = {
                                                 if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
                                                     ESP_ERROR_CHECK(err);
                                                     }
+uint8_t dummy = 0;
 
-
-
-
-for(uint8_t addr=1; addr<127; addr++) {
-        if(i2c_master_write_to_device(
+for(uint8_t addr = 1; addr < 127; addr++) {
+    if(i2c_master_write_to_device(
                 BOARD_OLED_I2C_PORT,
-                        addr,
-                                NULL,
-                                        0,
-                                                pdMS_TO_TICKS(20)) == ESP_OK) {
+                            addr,
+                                        &dummy,
+                                                    1,
+                                                                pdMS_TO_TICKS(20)) == ESP_OK) {
 
-                                                        ESP_LOGI("OLED","Found 0x%02X",addr);
-                                                            }
-                                                            }
-
+                                                                        ESP_LOGI("OLED", "Found device at 0x%02X", addr);
+                                                                            }
+                                                                            }
 
     ssd1306_init();
-    ESP_LOGI("OLED", "SSD1306 initialized");
+    ESP_LOGI("OLED",
+             "PORT=%d SDA=%d SCL=%d ADDR=0x%02X",
+                      BOARD_OLED_I2C_PORT,
+                               BOARD_PIN_OLED_SDA,
+                                        BOARD_PIN_OLED_SCL,
+                                                 BOARD_OLED_ADDR);
     }
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
