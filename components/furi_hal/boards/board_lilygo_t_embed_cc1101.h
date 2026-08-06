@@ -3,15 +3,15 @@
  * Board definition: LilyGo T-Embed CC1101
  *
  * MCU:      ESP32-S3 (dual-core Xtensa LX7)
- * Display:  ST7789 320x170 RGB565 via SPI
+ * Display:  SSD1306 0.96" 128x64 I2C
  * Input:    Rotary Encoder (A/B/Button) + Key button
- * SubGHz:   CC1101 via SPI (shared bus with LCD + SD)
+ * SubGHz:   CC1101 via SPI (shared bus with SD)
  * NFC:      PN532 via I2C
- * SD Card:  SPI (shared bus with LCD + CC1101)
+ * SD Card:  SPI (share CC1101)
  * IR:       TX (IO02) + RX (IO01)
- * Speaker:  I2S DAC (IO46/IO40/IO07)
- * RGB LED:  WS2812 x8 (IO14)
- * Mic:      I2S PDM (IO42/IO39)
+ * Speaker:  No
+ * RGB LED:  No
+ * Mic:      No
  */
 
 #pragma once
