@@ -1,6 +1,6 @@
 # Target-specific input driver selection
 if(NOT DEFINED FLIPPER_BOARD)
-    set(FLIPPER_BOARD "liligo_t_embed_cc1101" CACHE STRING "Target board")
+    set(FLIPPER_BOARD "lilygo_t_embed_cc1101" CACHE STRING "Target board")
 endif()
 
 set(TARGET_INPUT_DIR "${CMAKE_CURRENT_LIST_DIR}/../../targets/${FLIPPER_BOARD}")
