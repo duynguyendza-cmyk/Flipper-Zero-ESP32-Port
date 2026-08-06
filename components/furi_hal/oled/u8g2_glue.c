@@ -29,10 +29,7 @@ uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
     while (arg_int--) {
       txbuf[txlen++] = *data++;
       if (txlen >= TXBUF_SIZE) {
-        esp_err_t err = i2c_master_write_to_device(OLED_PORT, OLED_ADDR, txbuf, txlen, pdMS_TO_TICKS(100));
-        if (err != ESP_OK) {
-        ESP_LOGE(TAG, "I2C write: %s", esp_err_to_name(err));
-        }
+        i2c_master_write_to_device(OLED_PORT, OLED_ADDR, txbuf, txlen, pdMS_TO_TICKS(100));
         txlen = 0;
       }
 }
@@ -42,10 +39,7 @@ uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 
   case U8X8_MSG_BYTE_END_TRANSFER:
     if (txlen) {
-      esp_err_t err = i2c_master_write_to_device(OLED_PORT, OLED_ADDR, txbuf, txlen, pdMS_TO_TICKS(100));
-      if (err != ESP_OK) {
-        ESP_LOGE(TAG, "I2C end: %s", esp_err_to_name(err));
-      }
+   i2c_master_write_to_device(OLED_PORT, OLED_ADDR, txbuf, txlen, pdMS_TO_TICKS(100));
     }
     txlen = 0;
     return 1;

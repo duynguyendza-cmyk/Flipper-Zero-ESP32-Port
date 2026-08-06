@@ -99,23 +99,13 @@ esp_err_t err = i2c_driver_install(
 if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
     ESP_ERROR_CHECK(err);
     }
-for (uint8_t addr = 1; addr < 127; addr++) {
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(
-    BOARD_OLED_I2C_PORT, cmd, pdMS_TO_TICKS(50));
-    i2c_cmd_link_delete(cmd);
-}
 
 ssd1306_init();
 }
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
-{(void)size;
-ESP_LOGI("OLED", "commit size=%lu first=%02X %02X %02X %02X",
-         size, data[0], data[1], data[2], data[3]);
+{
+(void)size;
 ssd1306_draw_bitmap(data);
 }
 
