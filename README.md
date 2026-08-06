@@ -209,9 +209,6 @@ A complete starter kit is in [`sdcard.zip`](sdcard.zip) — extract it onto a FA
 # Build only
 ./buildAndFlash_T-Embed.sh --build-only
 
-# Waveshare ESP32-C6
-./buildAndFlash_waveshare_c6_1.47.sh
-./buildAndFlash_waveshare_c6_1.9.sh
 ```
 
 ### Build & Flash (Windows)
