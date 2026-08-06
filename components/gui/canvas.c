@@ -25,7 +25,12 @@ Canvas* canvas_init(void) {
     CanvasCallbackPairArray_init(canvas->canvas_callback_pair);
 
     // Setup u8g2 - use ESP32 glue callbacks
-u8g2_Setup_st756x_flipper(&canvas->fb, U8G2_R0, u8x8_hw_spi_esp32, u8x8_gpio_and_delay_esp32);
+u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+        &canvas->fb,
+            U8G2_R0,
+                u8x8_byte_hw_i2c,
+                    u8x8_gpio_and_delay_esp32);
+u8x8_SetI2CAddress(&canvas->fb.u8x8, 0x3C << 1);
     canvas->orientation = CanvasOrientationHorizontal;
     // Initialize display
     u8g2_InitDisplay(&canvas->fb);
@@ -71,13 +76,13 @@ void canvas_commit(Canvas* canvas) {
     furi_check(canvas);
     u8g2_SendBuffer(&canvas->fb);
 
-    // Send framebuffer to physical display
+    /*
     uint8_t* buf = canvas_get_buffer(canvas);
     size_t buf_size = canvas_get_buffer_size(canvas);
 
-    furi_hal_display_commit(buf, buf_size);
+    furi_hal_display_commit(buf, buf_size);*/
 
-    // Iterate over callbacks
+    
     canvas_lock(canvas);
     for
         M_EACH(p, canvas->canvas_callback_pair, CanvasCallbackPairArray_t) {

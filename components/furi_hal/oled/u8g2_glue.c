@@ -39,6 +39,7 @@ uint8_t u8x8_byte_hw_i2c(
 
                                                                             case U8X8_MSG_BYTE_SEND:
                                                                                 {
+                                                                                    ESP_LOGI("OLED", "SEND %d bytes cmd=%d", arg_int, is_cmd);
                                                                                         uint8_t *data = (uint8_t *)arg_ptr;
 
                                                                                                 for(uint8_t i = 0; i < arg_int; i++) {
@@ -68,6 +69,7 @@ uint8_t u8x8_byte_hw_i2c(
 
 case U8X8_MSG_BYTE_END_TRANSFER:
 {
+    ESP_LOGI("OLED", "END len=%d", tx_len);
     esp_err_t err =
             i2c_master_write_to_device(
                         OLED_I2C_PORT,

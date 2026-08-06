@@ -134,7 +134,8 @@ for (uint8_t addr = 1; addr < 127; addr++) {
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {(void)size;
-
+ESP_LOGI("OLED", "commit size=%lu first=%02X %02X %02X %02X",
+         size, data[0], data[1], data[2], data[3]);
 ssd1306_draw_bitmap(data);
 }
 
