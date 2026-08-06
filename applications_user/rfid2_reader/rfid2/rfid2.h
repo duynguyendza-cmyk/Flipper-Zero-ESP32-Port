@@ -19,7 +19,7 @@
 #include <boards/board.h> // BOARD_PIN_QWIIC_* Grove pins (board-specific)
 
 #define RFID2_I2C_ADDR 0x28
-#define RFID2_I2C_PORT I2C_NUM_1 // dedicated bus for the Grove port
+#define RFID2_I2C_PORT I2C_NUM_0 // dedicated bus for the Grove port
 // Grove I2C pins come from the board's QWIIC/Grove defines so this driver lands
 // on the right connector per board (Cardputer-ADV → G2/G1; StickS3 → G9/G10, which
 // keeps it OFF the StickS3 radio pins G2=CC1101_CSN / G1=nRF24_CE). Falls back to

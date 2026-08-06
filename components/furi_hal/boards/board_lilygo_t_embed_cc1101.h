@@ -37,7 +37,7 @@
 
 #define BOARD_OLED_I2C_PORT     I2C_NUM_1
 #define BOARD_OLED_ADDR         0x3C
-#define BOARD_OLED_I2C_FREQ_HZ  400000
+#define BOARD_OLED_I2C_FREQ_HZ  100000
 #define BOARD_OLED_I2C_TIMEOUT  1000
 
 /* ---- SD Card Pins (shared SPI bus with LCD and CC1101) ---- */
