@@ -88,7 +88,7 @@ i2c_config_t conf = {
                 .scl_io_num = BOARD_PIN_OLED_SCL,
                     .sda_pullup_en = GPIO_PULLUP_ENABLE,
                         .scl_pullup_en = GPIO_PULLUP_ENABLE,
-                            .master.clk_speed = BOARD_OLED_I2C_FREQ_HZ;
+                            .master.clk_speed = BOARD_OLED_I2C_FREQ_HZ,
                             };
 
                             ESP_ERROR_CHECK(i2c_param_config(BOARD_OLED_I2C_PORT, &conf));

@@ -11,7 +11,7 @@ u8g2_t g_u8g2;
 
 void ssd1306_init(void)
 {
-    u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+    /*u8g2_Setup_ssd1306_i2c_128x64_noname_f(
             &g_u8g2,
                     U8G2_R0,
                             u8x8_byte_hw_i2c,
@@ -26,7 +26,20 @@ u8x8_SetI2CAddress(
             u8g2_ClearBuffer(&g_u8g2);
             u8g2_SetFont(&g_u8g2,u8g2_font_6x10_tf);
             u8g2_DrawStr(&g_u8g2,0,20,"HELLO");
-            u8g2_SendBuffer(&g_u8g2);
+            u8g2_SendBuffer(&g_u8g2);*/
+            u8g2_InitDisplay(&g_u8g2);
+            u8g2_SetPowerSave(&g_u8g2, 0);
+
+            while (1) {
+                u8g2_ClearBuffer(&g_u8g2);
+                    u8g2_DrawBox(&g_u8g2, 0, 0, 128, 64);
+                        u8g2_SendBuffer(&g_u8g2);
+                            vTaskDelay(pdMS_TO_TICKS(1000));
+
+                                u8g2_ClearBuffer(&g_u8g2);
+                                    u8g2_SendBuffer(&g_u8g2);
+                                        vTaskDelay(pdMS_TO_TICKS(1000));
+                                        }
 }
 
 void ssd1306_draw_bitmap(const uint8_t* data)
