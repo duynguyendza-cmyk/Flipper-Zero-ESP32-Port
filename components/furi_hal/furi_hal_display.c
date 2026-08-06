@@ -83,54 +83,34 @@ static uint16_t bg_color;
 void furi_hal_display_init(void)
 {
 i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-            .sda_io_num = BOARD_PIN_OLED_SDA,
-                .scl_io_num = BOARD_PIN_OLED_SCL,
-                    .sda_pullup_en = GPIO_PULLUP_ENABLE,
-                        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-                            .master.clk_speed = BOARD_OLED_I2C_FREQ_HZ,
-                            };
+    .mode = I2C_MODE_MASTER,
+    .sda_io_num = BOARD_PIN_OLED_SDA,
+    .scl_io_num = BOARD_PIN_OLED_SCL,
+    .sda_pullup_en = GPIO_PULLUP_ENABLE,
+    .scl_pullup_en = GPIO_PULLUP_ENABLE,
+    .master.clk_speed = BOARD_OLED_I2C_FREQ_HZ,
+    };
 
-                            ESP_ERROR_CHECK(i2c_param_config(BOARD_OLED_I2C_PORT, &conf));
+ESP_ERROR_CHECK(i2c_param_config(BOARD_OLED_I2C_PORT, &conf));
 
-                            esp_err_t err = i2c_driver_install(
-                                BOARD_OLED_I2C_PORT,
-                                    I2C_MODE_MASTER,
-                                        0,
-                                            0,
-                                                0);
+esp_err_t err = i2c_driver_install(
+    BOARD_OLED_I2C_PORT, I2C_MODE_MASTER, 0, 0, 0);
 
-                                                if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
-                                                    ESP_ERROR_CHECK(err);
-                                                    }
-for (uint8_t addr = 1; addr < 127; addr++) {
-        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-
-            i2c_master_start(cmd);
-                i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
-                    i2c_master_stop(cmd);
-
-                        esp_err_t ret = i2c_master_cmd_begin(
-                                BOARD_OLED_I2C_PORT,
-                                        cmd,
-                                                pdMS_TO_TICKS(50));
-
-                                                    i2c_cmd_link_delete(cmd);
-
-                                                        if (ret == ESP_OK) {
-                                                                ESP_LOGI("SCAN", "Found 0x%02X", addr);
-                                                                    }
-                                                                    }
-
-
-    ssd1306_init();
-    ESP_LOGI("OLED",
-             "PORT=%d SDA=%d SCL=%d ADDR=0x%02X",
-                      BOARD_OLED_I2C_PORT,
-                               BOARD_PIN_OLED_SDA,
-                                        BOARD_PIN_OLED_SCL,
-                                                 BOARD_OLED_ADDR);
+if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+    ESP_ERROR_CHECK(err);
     }
+for (uint8_t addr = 1; addr < 127; addr++) {
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(
+    BOARD_OLED_I2C_PORT, cmd, pdMS_TO_TICKS(50));
+    i2c_cmd_link_delete(cmd);
+}
+
+ssd1306_init();
+}
 
 void furi_hal_display_commit(const uint8_t* data, uint32_t size)
 {(void)size;
@@ -141,31 +121,30 @@ ssd1306_draw_bitmap(data);
 
 void furi_hal_display_set_backlight(uint8_t value) {
         ssd1306_set_contrast(value);
-        }
+}
 
 void furi_hal_display_sleep(void) {
 }
 
 uint16_t furi_hal_display_get_h_res(void)
 {
-    return 128;
-    }
+return 128;
+}
 
 uint16_t furi_hal_display_get_v_res(void)
 {
-    return 64;
-    }
-
+return 64;
+}
 
 void furi_hal_display_set_fg_color(uint16_t color) {
-        fg_color = color;
-        }
+fg_color = color;
+}
 uint16_t furi_hal_display_get_fg_color(void) {
-            return fg_color;
-            }
+return fg_color;
+}
 void furi_hal_display_set_bg_color(uint16_t color) {
-                bg_color = color;
-                }
+bg_color = color;
+}
 uint16_t furi_hal_display_get_bg_color(void) {
-                    return bg_color;
-                    }
+return bg_color;
+}

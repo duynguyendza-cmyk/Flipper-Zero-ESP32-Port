@@ -24,32 +24,24 @@ int x = (128 - w) / 2;
 int y = (64 + h) / 2;
 u8g2_DrawStr(&g_u8g2, x, y, text);
 u8g2_SendBuffer(&g_u8g2);
-
 }
 
 void ssd1306_set_contrast(uint8_t contrast)
 {
-    u8g2_SetContrast(&g_u8g2, contrast);
-    }
-
+u8g2_SetContrast(&g_u8g2, contrast);
+}
 
 void ssd1306_draw_bitmap(const uint8_t* data)
 {
-    memcpy(
-            u8g2_GetBufferPtr(&g_u8g2),
-                    data,
-                            1024);
-                                u8g2_SendBuffer(&g_u8g2);
-                                }
+    memcpy(u8g2_GetBufferPtr(&g_u8g2), data, 1024);
+    u8g2_SendBuffer(&g_u8g2);
+}
 
+void ssd1306_clear(void){
+u8g2_ClearBuffer(&g_u8g2);
+u8g2_SendBuffer(&g_u8g2);
+}
 
-                                                            void ssd1306_clear(void)
-                                                            {
-                                                            u8g2_ClearBuffer(&g_u8g2);
-                                                            u8g2_SendBuffer(&g_u8g2);
-                                                                    }
-
-                                                                    void ssd1306_power(bool on)
-                                                                    {
-                                                                        u8g2_SetPowerSave(&g_u8g2, on ? 0 : 1);
-                                                                        }
+void ssd1306_power(bool on){
+u8g2_SetPowerSave(&g_u8g2, on ? 0 : 1);
+}
