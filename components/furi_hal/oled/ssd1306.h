@@ -11,3 +11,4 @@ void ssd1306_init(void);
 void ssd1306_draw_bitmap(const uint8_t* data);
 void ssd1306_clear(void);
 void ssd1306_power(bool on);
+void ssd1306_set_contrast(uint8_t contrast);

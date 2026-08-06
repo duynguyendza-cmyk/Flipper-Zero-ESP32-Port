@@ -121,13 +121,12 @@ void furi_hal_light_init(void) {
 }
 
 void furi_hal_light_set(Light light, uint8_t value) {
+    ESP_LOGI("LIGHT", "Backlight = %d", value);
+    extern void ssd1306_set_contrast(uint8_t value);
     if(light & LightBacklight) {
-        ledc_set_duty(
-            BACKLIGHT_LEDC_SPEED,
-            BACKLIGHT_LEDC_CHANNEL,
-            furi_hal_light_backlight_duty_from_value(value));
-        ledc_update_duty(BACKLIGHT_LEDC_SPEED, BACKLIGHT_LEDC_CHANNEL);
-    }
+            ssd1306_set_contrast(value);
+            }
+    
 #ifdef BOARD_PIN_WS2812_DATA
     bool rgb_changed = false;
     if(light & LightRed)   { led_r = value; rgb_changed = true; }

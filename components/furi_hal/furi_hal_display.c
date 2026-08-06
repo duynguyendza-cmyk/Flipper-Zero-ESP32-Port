@@ -139,9 +139,9 @@ ESP_LOGI("OLED", "commit size=%lu first=%02X %02X %02X %02X",
 ssd1306_draw_bitmap(data);
 }
 
-void furi_hal_display_set_backlight(uint8_t brightness) {
-    (void)brightness;
-}
+void furi_hal_display_set_backlight(uint8_t value) {
+        ssd1306_set_contrast(value);
+        }
 
 void furi_hal_display_sleep(void) {
 }
