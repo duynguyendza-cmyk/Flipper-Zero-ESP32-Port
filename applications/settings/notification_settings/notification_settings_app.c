@@ -8,6 +8,7 @@
 #include <furi.h>
 #include <furi_hal_rtc.h>
 #include <furi_hal_light.h>
+#include <furi_hal_display.h>
 #include <notification/notification_app.h>
 #include <notification/notification_messages.h>
 #include <gui/modules/variable_item_list.h>
