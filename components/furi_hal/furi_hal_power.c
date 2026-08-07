@@ -416,10 +416,7 @@ void furi_hal_power_shutdown(void) {
      * + SPIRAM_MALLOC_ALWAYSINTERNAL=1024 pushes the 4 KB stack external). That
      * assert panicked (reset_reason=4) and rebooted on every power-off. Without
      * the hold, the isolation step is skipped and deep sleep starts cleanly. */
-#ifdef BOARD_PIN_LCD_BL
-    furi_hal_display_set_backlight(0);
-#endif
-    furi_hal_display_sleep();
+
 
     /* Power down peripherals (CC1101 + WS2812) */
 #ifdef BOARD_PIN_PWR_EN
