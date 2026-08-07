@@ -35,7 +35,6 @@ typedef struct {
     FuriEventFlag* back_event;
 } NotificationAppMessage;
 
-static bool lcd_backlight_is_on = false;
 
 static uint8_t notification_clamp_u8(float value) {
     if(value <= 0.0f) return 0;
@@ -61,34 +60,30 @@ static uint32_t notification_settings_display_off_delay_ticks(NotificationApp* a
 }
 
 static void notification_apply_internal_display_layer(NotificationApp* app, uint8_t layer_value) {
-    furi_assert(app);
+        furi_assert(app);
+            app->display.value[LayerInternal] = layer_value;
+                furi_hal_display_set_backlight(layer_value);
+                }
 
-    app->display.value[LayerInternal] = layer_value;
 
-    if(app->display.index == LayerInternal) {
-        furi_hal_display_set_backlight(app->display.value[LayerInternal]);
-    }
-}
-
-static void notification_apply_notification_display_layer(NotificationApp* app, uint8_t layer_value) {
-    furi_assert(app);
-
-    app->display.index = LayerNotification;
-    app->display.value[LayerNotification] = layer_value;
-
-    if(lcd_backlight_is_on) return;
-
-    furi_hal_display_set_backlight(app->display.value[LayerNotification]);
-}
+static void notification_apply_notification_display_layer(
+        NotificationApp* app,
+            uint8_t layer_value) {
+                furi_assert(app);
+                    app->display.index = LayerNotification;
+                        app->display.value[LayerNotification] = layer_value;
+                            furi_hal_display_set_backlight(layer_value);
+                            }
 
 static void notification_reset_notification_display_layer(NotificationApp* app) {
-    furi_assert(app);
+        furi_assert(app);
 
-    app->display.value[LayerNotification] = 0;
-    app->display.index = LayerInternal;
+            app->display.value[LayerNotification] = 0;
+                app->display.index = LayerInternal;
 
-    furi_hal_display_set_backlight(app->display.value[LayerInternal]);
-}
+                    furi_hal_display_set_backlight(app->display.value[LayerInternal]);
+                    }
+
 
 static void notification_reset_notification_layer(
     NotificationApp* app,
@@ -96,11 +91,12 @@ static void notification_reset_notification_layer(
     float display_brightness_setting) {
     if(!reset_display) return;
 
-    if(display_brightness_setting != app->settings.display_brightness) {
-        furi_hal_display_set_backlight(
-            notification_clamp_u8(
-                app->settings.display_brightness * 255.0f * app->current_night_shift));
-    }
+    furi_hal_display_set_backlight(
+        notification_clamp_u8(
+        app->settings.display_brightness *
+            255.0f *
+        app->current_night_shift));
+    
 
     if(app->settings.display_off_delay_ms > 0) {
         furi_timer_start(app->display_timer, notification_settings_display_off_delay_ticks(app));
@@ -172,39 +168,37 @@ static void notification_process_notification_message(
                         notification_message->data.led.value,
                         display_brightness_setting));
                 reset_display = true;
-                lcd_backlight_is_on = true;
+                
             } else {
                 reset_display = false;
                 notification_reset_notification_display_layer(app);
-                lcd_backlight_is_on = false;
+        
 
                 if(furi_timer_is_running(app->display_timer)) {
                     furi_timer_stop(app->display_timer);
                 }
             }
             break;
-        case NotificationMessageTypeLedDisplayBacklightForceOn:
-            lcd_backlight_is_on = false;
-            notification_apply_notification_display_layer(
-                app,
-                notification_scale_display_brightness(
-                    app,
-                    notification_message->data.led.value,
-                    display_brightness_setting));
+        
+case NotificationMessageTypeLedDisplayBacklightForceOn:
+    notification_apply_notification_display_layer(
+            app,
+    notification_scale_display_brightness(
+            app,
+            notification_message->data.led.value,
+            display_brightness_setting));
             reset_display = true;
-            lcd_backlight_is_on = true;
-            break;
+break;
+
         case NotificationMessageTypeLedDisplayBacklightEnforceOn:
-            if(!app->display_led_lock) {
-                app->display_led_lock = true;
                 notification_apply_internal_display_layer(
                     app,
                     notification_scale_display_brightness(
                         app,
                         notification_message->data.led.value,
                         display_brightness_setting));
-                lcd_backlight_is_on = true;
-            }
+        
+            
             break;
         case NotificationMessageTypeLedDisplayBacklightEnforceAuto:
             if(app->display_led_lock) {

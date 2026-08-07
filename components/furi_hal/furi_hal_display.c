@@ -9,7 +9,7 @@
 #include "furi_hal_light.h"
 #include "furi_hal_resources.h"
 #include "boards/board.h"
-
+#include <esp_log.h>
 #include <string.h>
 #include <esp_heap_caps.h>
 #include <esp_system.h>
@@ -109,6 +109,7 @@ ssd1306_draw_bitmap(data);
 }
 
 void furi_hal_display_set_backlight(uint8_t value) {
+    ESP_LOGI("OLED", "Contrast=%d", value);
         ssd1306_set_contrast(value);
         }
 
