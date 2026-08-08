@@ -145,7 +145,7 @@ void u8x8_SetPowerSave(u8x8_t *u8x8, uint8_t is_enable)
 
 void u8x8_SetFlipMode(u8x8_t *u8x8, uint8_t mode)
 {
-  u8x8->display_cb(u8x8, U8X8_MSG_DISPLAY_SET_FLIP_MODE, mode, NULL);  
+return;
 }
 
 void u8x8_SetContrast(u8x8_t *u8x8, uint8_t value)

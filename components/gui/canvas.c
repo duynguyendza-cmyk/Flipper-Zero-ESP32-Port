@@ -30,7 +30,7 @@ u8g2_Setup_ssd1306_i2c_128x64_noname_f(
             U8G2_R0,
                 u8x8_byte_hw_i2c,
                     u8x8_gpio_and_delay_esp32);
-u8x8_SetI2CAddress(&canvas->fb.u8x8, 0x3C << 1);
+//u8x8_SetI2CAddress(&canvas->fb.u8x8, 0x3C << 1);
     canvas->orientation = CanvasOrientationHorizontal;
     // Initialize display
     u8g2_InitDisplay(&canvas->fb);
