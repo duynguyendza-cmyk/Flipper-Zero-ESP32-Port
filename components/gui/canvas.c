@@ -4,7 +4,7 @@
 #include <furi.h>
 #include <furi_hal.h>
 #include <stdint.h>
-#include "oled/u8g2_glue.h"
+#include "u8g2_glue.h"
 
 const CanvasFontParameters canvas_font_params[FontTotalNumber] = {
     [FontPrimary] = {.leading_default = 12, .leading_min = 11, .height = 8, .descender = 2},

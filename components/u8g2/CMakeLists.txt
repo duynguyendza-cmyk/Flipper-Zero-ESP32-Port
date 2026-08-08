@@ -12,7 +12,8 @@ idf_component_register(
         "u8g2_line.c"
         "u8g2_ll_hvline.c"
         "u8g2_setup.c"
-
+"ssd1306.c"
+"u8g2_glue.c"
         "u8x8_8x8.c"
         "u8x8_byte.c"
         "u8x8_cad.c"

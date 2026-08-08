@@ -20,8 +20,8 @@
 #include <freertos/semphr.h>
 #include <driver/i2c.h>
 #include "u8x8.h"
-#include "oled/u8g2_glue.h"
-#include "oled/ssd1306.h"
+#include "u8g2_glue.h"
+#include "ssd1306.h"
 
 extern u8g2_t g_u8g2;
 

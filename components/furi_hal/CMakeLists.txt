@@ -27,8 +27,6 @@ set(FURI_HAL_SRCS
     "furi_hal_light.c"
     "furi_hal_vibro.c"
     "furi_hal_speaker.c"
-    "oled/ssd1306.c"
-    "oled/u8g2_glue.c"
     "furi_hal_display.c"
     "furi_hal_spi_bus.c"
     "furi_hal_spi.c"
@@ -66,7 +64,7 @@ endif()
 
 idf_component_register(
     SRCS ${FURI_HAL_SRCS}
-    INCLUDE_DIRS "." ".." "../.." "boards" "oled"
+    INCLUDE_DIRS "." ".." "../.." "boards"
     REQUIRES ${FURI_HAL_REQUIRES}
 )
 
